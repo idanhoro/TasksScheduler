@@ -49,15 +49,15 @@ minute | hour | day_of_week  |  command
 #### Task 4 finish his sleep time and executed:
 ![task4_execute](./images/task4_execute.png)
 
-# Execution instruction:
+# Installation:
+This project was written using Microsoft Visual Studio 2019 and C++14, other versions may not work.
 ```
 gcc source.cpp -o TasksScheduler.exe
-
 ```
 Then run:
 ```
 TasksScheduler.exe
 ```
 
-## Library used for cron patterns:
-https://github.com/mariusbancila/croncpp
+## Credits:
+`croncpp.h`: https://github.com/mariusbancila/croncpp
