@@ -7,8 +7,10 @@
 #include <queue>
 #include <thread>
 #include <chrono>
+#include <future>
 
 #include "croncpp.h"
+
 
 
 typedef struct Task {
@@ -22,23 +24,35 @@ typedef struct Task {
     };
 };
 
-void ParseCSVToDequeTasks(std::deque<Task>&, std::string&);
+int Start();
+void ParseTasksCSV(std::deque<Task>&, std::string&);
 Task CreateTask(std::string&, std::string&, std::string&, std::string&);
 void ExecuteTasks(std::deque<Task>&);
 void ExecuteTask(std::string);
 
 int main() {
-    std::string file_name = "./tasks.csv";
-    std::deque<Task> tasks_queue;
-    std::cout << "Let's go" << std::endl;
-    ParseCSVToDequeTasks(tasks_queue, file_name);
-    ExecuteTasks(tasks_queue);
+    return Start();
 }
 
+int Start() {
+    std::string file_name = "./tasks.csv";
+    std::deque<Task> tasks_queue;
+    std::cout << "The scheduler started to run : " << std::endl;
+    ParseTasksCSV(tasks_queue, file_name);
+    ExecuteTasks(tasks_queue);
+    return 0;
+}
+/**
+ * Parse the CSV file to  queue of tasks
 
-void ParseCSVToDequeTasks(std::deque<Task>& tasks_queue, std::string& file_name) {
+ * 
+ * @param tasks_queue
+ * @param file_name
+ * @return
+ */
+void ParseTasksCSV(std::deque<Task>& tasks_queue, std::string& file_name) {
     std::ifstream tasks(file_name);
-    if (!tasks.is_open()) std::cerr << "ERROR: File Open" << '\n';
+    if (!tasks.is_open()) std::cerr << "ERROR: File Open or not exist" << '\n';
 
     std::string minute;
     std::string hour;
@@ -75,18 +89,15 @@ void ExecuteTask(std::string command) {
 void ExecuteTasks(std::deque<Task>& tasks_queue) {
     std::vector<std::thread> workers;
 
+
     while (!tasks_queue.empty()) {
         
         Task current_task = tasks_queue.front();
         std::this_thread::sleep_until(std::chrono::system_clock::from_time_t(current_task.next_run));
-
+        
         workers.push_back(std::thread(ExecuteTask, current_task.command));
         tasks_queue.push_back(current_task);
         tasks_queue.pop_front();
     }
-    for (std::thread& t : workers) {
-        if (t.joinable()) {
-            t.join();
-        }
-    }
+    
 }
