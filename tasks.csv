@@ -2,5 +2,5 @@ minute,hour,day_of_week,command
 24,4,2,task1
 57,17,5,task2
 11,20,0,task3
-02,18,0,echo "Task 4 started and sleep for 2 minutes" && timeout /t 120 && echo "Task 4 finish" 
-03,18,0,echo "Task 5 start and finish"
+35,18,0,echo "Task 4 started and sleep for 2 minutes" && timeout /t 120 && echo "Task 4 finish" 
+36,18,0,echo "Task 5 start and finish"
