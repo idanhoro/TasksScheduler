@@ -16,11 +16,11 @@
 typedef struct Task {
     std::string command;
     cron::cronexpr cron_expression;
-    std::time_t next_run;
+    std::time_t next_execution;
 
-    bool operator<(Task const& other_task) { return next_run < other_task.next_run; }
+    bool operator<(Task const& other_task) { return next_execution < other_task.next_execution; }
     friend std::ostream& operator<<(std::ostream& os, const Task& task) {
-        return os << "Next task is:" << task.command << " at: " << std::put_time(localtime(&task.next_run), "%FT%H:%M");
+        return os << "Next task is:" << task.command << " at: " << std::put_time(localtime(&task.next_execution), "%FT%H:%M");
     };
 };
 
@@ -43,12 +43,11 @@ int Start() {
     return 0;
 }
 /**
- * Parse the CSV file to  queue of tasks
+ * Parse the CSV file and fill the queue of tasks.
 
  * 
- * @param tasks_queue
- * @param file_name
- * @return
+ * @param tasks_queue - An empty queue that stores the tasks.
+ * @param file_name - A string variable that stores the file name.
  */
 void ParseTasksCSV(std::deque<Task>& tasks_queue, std::string& file_name) {
     std::ifstream tasks(file_name);
@@ -71,7 +70,17 @@ void ParseTasksCSV(std::deque<Task>& tasks_queue, std::string& file_name) {
     std::sort(std::begin(tasks_queue), std::end(tasks_queue));
     tasks.close();
 }
-
+/**
+ *Calculate the next execute time base on the cron and current time,  
+ *then create task based on varibles sent from the creator 
+ * and the calculation result.
+ 
+ * @param minute - A string variable that stores the minute that task should execute at.
+ * @param hour - A string variable that stores the hour that task should execute.
+ * @param day_of_week - A string variable that stores the day of the week that  task should execute.
+ * @param command - A string variable that stores the command the task should execute. 
+ * @return task - A struct of task variable (has explained above) that stores all needed for task struct.
+ */
 Task CreateTask(std::string& minute, std::string& hour, std::string& day_of_week, std::string& command) {
     std::string cron_str = "* " + minute + " " + hour + " * * " + day_of_week;
     auto cron = cron::make_cron(cron_str);
@@ -93,7 +102,7 @@ void ExecuteTasks(std::deque<Task>& tasks_queue) {
     while (!tasks_queue.empty()) {
         
         Task current_task = tasks_queue.front();
-        std::this_thread::sleep_until(std::chrono::system_clock::from_time_t(current_task.next_run));
+        std::this_thread::sleep_until(std::chrono::system_clock::from_time_t(current_task.next_execution));
         
         workers.push_back(std::thread(ExecuteTask, current_task.command));
         tasks_queue.push_back(current_task);
