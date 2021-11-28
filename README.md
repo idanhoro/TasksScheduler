@@ -4,7 +4,7 @@ SaskScheduler is a system which loads runs scheduled tasks by using a cron-like 
 
 ## Description
 ---
-asksScheduler automatically executes scheduled tasks.
+TasksScheduler automatically executes scheduled tasks.
 The system loads tasks from a CSV file and executes them automatically when scheduled.
 The tasks are executed sequentially and also supports simultaneously executions by using a multithreaded architecture.
 
