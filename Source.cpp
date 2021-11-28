@@ -52,7 +52,7 @@ int Start() {
 
  * 
  * @param tasks_queue - An empty queue which stores the tasks.
- * @param file_name - The path to the tasks CSV.
+ * @param file_name - The path to the tasks CSV .
  */
 void ParseTasksCSV(std::deque<Task>& tasks_queue, std::string& file_name) {
     std::ifstream tasks_csv(file_name);
