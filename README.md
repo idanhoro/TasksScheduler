@@ -58,3 +58,6 @@ Then run:
 ```
 TasksScheduler.exe
 ```
+
+## Library used for cron patterns:
+https://github.com/mariusbancila/croncpp
