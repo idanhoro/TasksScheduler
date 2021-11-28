@@ -19,7 +19,7 @@ typedef struct Task {
 
     bool operator<(Task const& other_task) { return next_execution < other_task.next_execution; }
     friend std::ostream& operator<<(std::ostream& os, const Task& task) {
-        return os << "Next task is:" << task.command << " at: " << std::put_time(localtime(&task.next_execution), "%FT%H:%M");
+        return os << "The task: " << task.command << "\n" << " execute at: " << std::put_time(localtime(&task.next_execution), "%FT%H:%M");
     };
 };
 
@@ -40,19 +40,18 @@ int main() {
 int Start() {
     std::string file_name = "./tasks.csv";
     std::deque<Task> tasks_queue;
-
-    std::cout << "The scheduler started to run : " << std::endl;
+    std::cout << "The scheduler started to run: " << std::endl;
     ParseTasksCSV(tasks_queue, file_name);
     ExecuteTasks(tasks_queue);
-
     return 0;
 }
+
 /**
  * Parse the CSV file and populate the tasks queue.
 
  * 
  * @param tasks_queue - An empty queue which stores the tasks.
- * @param file_name - The path to the tasks CSV .
+ * @param file_name - The path to the tasks CSV.
  */
 void ParseTasksCSV(std::deque<Task>& tasks_queue, std::string& file_name) {
     std::ifstream tasks_csv(file_name);
@@ -68,6 +67,7 @@ void ParseTasksCSV(std::deque<Task>& tasks_queue, std::string& file_name) {
         getline(tasks_csv, command, '\n');
         tasks_queue.push_front(CreateTask(minute, hour, day_of_week, command));
     }
+
     std::sort(std::begin(tasks_queue), std::end(tasks_queue));
     tasks_csv.close();
 }
@@ -78,7 +78,7 @@ void ParseTasksCSV(std::deque<Task>& tasks_queue, std::string& file_name) {
  * @param hour - Hours section of the execution time.
  * @param day_of_week - Day of the week section of the execution date.
  * @param command - The command which will be executed.
- * @return task - The constucted task
+ * @return task - The constructed task
  */
 Task CreateTask(std::string& minute, std::string& hour, std::string& day_of_week, std::string& command) {
     std::string cron_str = "* " + minute + " " + hour + " * * " + day_of_week; // cron expression represnting: at H:M AM, only on (Day of week)
@@ -95,7 +95,7 @@ Task CreateTask(std::string& minute, std::string& hour, std::string& day_of_week
 void ExecuteTask(std::string command) {
     system(command.c_str());
     auto now{ std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()) };
-    std::cout << command << " has been executed at: " << std::put_time(localtime(&now), "%FT%H:%M") << std::endl;
+    std::cout << "The task: " << command << "\n" << " execute at: " << std::put_time(localtime(&now), "%FT%H:%M") << std::endl;
     
 }
 /**
@@ -109,10 +109,10 @@ void ExecuteTask(std::string command) {
 void ExecuteTasks(std::deque<Task>& tasks_queue) {
     std::vector<std::thread> workers;
 
-    while (!tasks_queue.empty()) { 
+    while (!tasks_queue.empty()) {
         Task current_task = tasks_queue.front();
-        std::this_thread::sleep_until(std::chrono::system_clock::from_time_t(current_task.next_execution));//The time that thread should wait until it's scheduled time.
-        
+        std::this_thread::sleep_until(std::chrono::system_clock::from_time_t(current_task.next_execution)); //The time that thread should wait until it's scheduled time.
+
         workers.push_back(std::thread(ExecuteTask, current_task.command));
         tasks_queue.push_back(current_task);
         tasks_queue.pop_front();

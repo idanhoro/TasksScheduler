@@ -2,5 +2,5 @@ minute,hour,day_of_week,command
 24,4,2,task1
 57,17,5,task2
 11,20,0,task3
-38,17,0,echo "Thread 4 started /n" && timeout /t 120 && echo "Thread 4 finish" 
-39,17,0,echo "Directory5 start and finish"
+02,18,0,echo "Task 4 started and sleep for 2 minutes" && timeout /t 120 && echo "Task 4 finish" 
+03,18,0,echo "Task 5 start and finish"
