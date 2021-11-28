@@ -40,11 +40,21 @@ minute | hour | day_of_week  |  command
 
 #### Task  4 and 5 should execute.
 ![CSV_example](./images/CSV_example.png)
-#### Scheduler start -
+#### Scheduler start:
 ![scheduler_start](./images/scheduler_start.png) 
-#### Task 4 started and changed to sleep for 2 minutes -
+#### Task 4 started and changed to sleep for 2 minutes:
 ![task4_start_and_sleep](./images/task4_start_and_sleep.png)
-#### Task 5 arrive and execute before task 4 - 
+#### Task 5 arrive and execute before task 4: 
 ![task5_start_and_execute](./images/task5_start_and_execute.png)
-#### Task 4 finish his sleep time and executed -
+#### Task 4 finish his sleep time and executed:
 ![task4_execute](./images/task4_execute.png)
+
+# Execution instruction:
+```
+gcc source.cpp -o TasksScheduler.exe
+
+```
+Then run:
+```
+TasksScheduler.exe
+```
