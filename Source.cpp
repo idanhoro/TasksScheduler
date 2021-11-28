@@ -34,6 +34,10 @@ int main() {
     return Start();
 }
 
+/**
+ * Loading the CSV file and and initialize the queue of tasks,
+ * then calls functions in chronological order.
+ */
 int Start() {
     std::string file_name = "./tasks.csv";
     std::deque<Task> tasks_queue;
@@ -59,7 +63,7 @@ void ParseTasksCSV(std::deque<Task>& tasks_queue, std::string& file_name) {
     std::string command;
     getline(tasks, minute, '\n');
 
-    while (tasks.peek() != EOF) {
+    while (tasks.peek() != EOF) { //Check if the next char is the end of the file.
 
         getline(tasks, minute, ',');
         getline(tasks, hour, ',');
@@ -82,27 +86,39 @@ void ParseTasksCSV(std::deque<Task>& tasks_queue, std::string& file_name) {
  * @return task - A struct of task variable (has explained above) that stores all needed for task struct.
  */
 Task CreateTask(std::string& minute, std::string& hour, std::string& day_of_week, std::string& command) {
-    std::string cron_str = "* " + minute + " " + hour + " * * " + day_of_week;
+    std::string cron_str = "* " + minute + " " + hour + " * * " + day_of_week; // cron expression represnting: at H:M AM, only on (Day of week)
     auto cron = cron::make_cron(cron_str);
     Task task{ command, cron, cron::cron_next(cron, std::time(0)) };
     return task;
 }
+/**
+ * Execute the given command as system call.
 
+ *
+ * @param command - A string that stores the command should execute.
+ */
 void ExecuteTask(std::string command) {
     system((command).c_str());
     auto now{ std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()) };
     std::cout << command << " has been executed at: " << std::put_time(localtime(&now), "%FT%H:%M") << std::endl;
     
 }
+/**
+ * Pulls tasks while the queue isnt empty,
+ * changing the thread to sleep until his exection time,
+ * executing the tasks in diffrent threads,
+ * then pushes the task to the end of the queue to create circle of tasks.
 
+ *
+ * @param tasks_queue - A queue full of tasks waiting to be executed.
+ */
 void ExecuteTasks(std::deque<Task>& tasks_queue) {
     std::vector<std::thread> workers;
-
 
     while (!tasks_queue.empty()) {
         
         Task current_task = tasks_queue.front();
-        std::this_thread::sleep_until(std::chrono::system_clock::from_time_t(current_task.next_execution));
+        std::this_thread::sleep_until(std::chrono::system_clock::from_time_t(current_task.next_execution));//The time that thread should wait until his scheduled time.
         
         workers.push_back(std::thread(ExecuteTask, current_task.command));
         tasks_queue.push_back(current_task);

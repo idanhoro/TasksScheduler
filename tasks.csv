@@ -2,5 +2,5 @@ minute,hour,day_of_week,command
 24,4,2,task1
 57,17,5,task2
 11,20,0,task3
-32,14,0,mkdir "Directory4 start" && timeout /t 120 && mkdir "Directory4 finish" 
-33,14,0,mkdir "Directory5 start"
+26,15,0,mkdir "Directory4 start" && timeout /t 120 && mkdir "Directory4 finish" 
+27,15,0,mkdir "Directory5 start"
